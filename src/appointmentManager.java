@@ -7,23 +7,127 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.awt.datatransfer.StringSelection;
 /**
  *
  * @author rudsr
  */
-public class appointmentManager extends javax.swing.JFrame {
-
-    private jTable table;
-    private DefaultTableModel model;
+public class appointmentManager extends javax.swing.JFrame
+{
+    
     private dbConnection db;
     
-    private jTextFields 
     
     /**
      * Creates new form appointmentManager
      */
-    public appointmentManager(dbConnection db) {
+    public appointmentManager(dbConnection db) 
+    {
+        this.db = db;
         initComponents();
+        loadAppointmentsIntoTable();
+        setupTableCopy();
+    }
+  
+    private void loadAppointmentsIntoTable() 
+    {
+        DefaultTableModel model = (DefaultTableModel) ApointmentMtable.getModel();
+        model.setRowCount(0);
+
+        try (Connection conn = db.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM Appointments")) {
+
+            while (rs.next()) 
+            {
+                model.addRow(new Object[]{
+                    rs.getInt("AppointmentID"),
+                    rs.getString("StudentName"),
+                    rs.getString("CounselorID"),
+                    rs.getString("Date"),
+                    rs.getString("Time"),
+                    rs.getString("Status")
+                });
+            }
+        } 
+        catch (SQLException ex) 
+        {
+            JOptionPane.showMessageDialog(this, "Error loading appointments: " + ex.getMessage());
+        }
+    }
+    private void clearFields() 
+    {
+        txtFieldAMStudentName.setText("");
+        txtFieldAMCounselorID.setText("");
+        txtFieldAMDate.setText("");
+        txtFieldAMTime.setText("");
+        txtFieldAMStatus.setText("");
+    }
+     
+    private void setupTableCopy() {
+        ApointmentMtable.setCellSelectionEnabled(true);
+        ApointmentMtable.getInputMap().put(KeyStroke.getKeyStroke("ctrl C"), "copy");
+        ApointmentMtable.getActionMap().put("copy", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                StringSelection selection = new StringSelection(getSelectedTableCells());
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+            }
+        });
+    }
+    
+    private String getSelectedTableCells() {
+        int[] rows = ApointmentMtable.getSelectedRows();
+        int[] cols = ApointmentMtable.getSelectedColumns();
+        StringBuilder sb = new StringBuilder();
+
+        for (int row : rows) {
+            for (int i = 0; i < cols.length; i++) {
+                Object value = ApointmentMtable.getValueAt(row, cols[i]);
+                sb.append(value == null ? "" : value.toString());
+                if (i < cols.length - 1) sb.append("\t");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+    
+        private void btnAMaddActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        String studentName = txtFieldAMStudentName.getText().trim();
+        String counselorID = txtFieldAMCounselorID.getText().trim();
+        String date = txtFieldAMDate.getText().trim();
+        String time = txtFieldAMTime.getText().trim();
+        String status = txtFieldAMStatus.getText().trim();
+
+        if (studentName.isEmpty() || counselorID.isEmpty() || date.isEmpty() || time.isEmpty() || status.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields.");
+            return;
+        }
+
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "INSERT INTO Appointments (StudentName, CounselorID, Date, Time, Status) VALUES (?, ?, ?, ?, ?)")) {
+
+            ps.setString(1, studentName);
+            ps.setString(2, counselorID);
+            ps.setString(3, date);
+            ps.setString(4, time);
+            ps.setString(5, status);
+            ps.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Appointment added successfully.");
+            loadAppointmentsIntoTable();
+            clearFields();
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error adding appointment: " + ex.getMessage());
+        }
+    }
+    // Event handler for Main Menu button
+
+
+    // Event handler for Exit button
+    private void btnAMexitActionPerformed(java.awt.event.ActionEvent evt) {                                        
+        System.exit(0);
     }
 
     /**
@@ -185,7 +289,7 @@ public class appointmentManager extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAMmainmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAMmainmenuActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_btnAMmainmenuActionPerformed
 
     private void txtFieldAMStudentNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldAMStudentNameActionPerformed
@@ -220,10 +324,9 @@ public class appointmentManager extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new appointmentManager().setVisible(true);
-            }
+        dbConnection db = new dbConnection();
+        java.awt.EventQueue.invokeLater(() -> {
+            new appointmentManager(db).setVisible(true);
         });
     }
 
@@ -245,4 +348,3 @@ public class appointmentManager extends javax.swing.JFrame {
     private javax.swing.JTextField txtFieldAMStudentName;
     private javax.swing.JTextField txtFieldAMTime;
     // End of variables declaration//GEN-END:variables
-}
