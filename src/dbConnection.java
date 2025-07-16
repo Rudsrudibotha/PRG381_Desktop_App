@@ -40,6 +40,16 @@ public class dbConnection {
     public Connection getConnection() {
         return con;
     }
+        public void close() {
+        if (con != null) {
+            try {
+                con.close();
+                System.out.println("Database connection closed.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        }
     
     // Create the tables required
  // Create the tables required

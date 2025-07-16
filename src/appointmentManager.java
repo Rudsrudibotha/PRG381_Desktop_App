@@ -34,8 +34,8 @@ public class appointmentManager extends javax.swing.JFrame
         DefaultTableModel model = (DefaultTableModel) ApointmentMtable.getModel();
         model.setRowCount(0);
 
-        try (Connection conn = db.getConnection();
-             Statement stmt = conn.createStatement();
+        Connection conn = db.getConnection();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM Appointments")) {
 
             while (rs.next()) 
@@ -312,8 +312,8 @@ public class appointmentManager extends javax.swing.JFrame
             JOptionPane.showMessageDialog(this, "Invalid Time");
         }
         try {
-            Connection con = db.getConnection(); // Get shared connection, DON'T close it
-            try (PreparedStatement pstmt = con.prepareStatement(
+            Connection conn = db.getConnection(); 
+            try (PreparedStatement pstmt = conn.prepareStatement(
                 "INSERT INTO Appointments (StudentName, CounselorID, AppointmentDate, AppointmentTime, Status) VALUES (?, ?, ?, ?, ?)")) {
 
                 pstmt.setString(1, studentName);
@@ -352,6 +352,8 @@ public class appointmentManager extends javax.swing.JFrame
         dbConnection db = new dbConnection();
         db.connect(); // ✅ Establish DB connection
         db.createTables(); // Optional: Create tables on startup
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {db.close();}));
 
         java.awt.EventQueue.invokeLater(() -> {
             new appointmentManager(db).setVisible(true);
