@@ -225,11 +225,18 @@ public class MainMenu extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        AppSession.db = new dbConnection(); // Global DB connection initialized
+    AppSession.db = new dbConnection();
+    try {
+        AppSession.db.connect();
+        AppSession.db.createTables();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> AppSession.db.close()));
 
         java.awt.EventQueue.invokeLater(() -> {
-            new MainMenu().setVisible(true);
+            new MainMenu().setVisible(true); // Start at MainMenu
         });
+    } catch (ClassNotFoundException e) {
+        JOptionPane.showMessageDialog(null, "Database driver not found: " + e.getMessage());
+    }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
