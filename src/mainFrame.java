@@ -19,6 +19,7 @@ public class mainFrame extends JFrame {
     public static void main(String[] args) {
         try {
             db.connect();
+            db.createTables();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
