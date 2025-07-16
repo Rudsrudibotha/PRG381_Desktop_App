@@ -8,12 +8,13 @@
  * @author rudsr
  */
 public class feedbackManagement extends javax.swing.JFrame {
-
+    private dbConnection db;
     /**
      * Creates new form feedbackManagement
      */
     public feedbackManagement() {
         initComponents();
+        this.db = db;
     }
 
     /**

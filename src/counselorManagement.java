@@ -8,12 +8,13 @@
  * @author rudsr
  */
 public class counselorManagement extends javax.swing.JFrame {
-
+    private dbConnection db;
     /**
      * Creates new form counselorManagement
      */
     public counselorManagement() {
         initComponents();
+        this.db = db;
     }
 
     /**
