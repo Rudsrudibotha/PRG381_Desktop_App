@@ -120,7 +120,7 @@ public class appointmentManager extends javax.swing.JFrame
         txtFieldAMStatus = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1000, 800));
+        setMaximumSize(new java.awt.Dimension(818, 693));
         setResizable(false);
 
         ApointmentMtable.setModel(new javax.swing.table.DefaultTableModel(

@@ -17,13 +17,13 @@ public class counselorManagement extends javax.swing.JFrame {
      * Creates new form counselorManagement
      */
     public counselorManagement() {
-    initComponents();
-    this.db = new dbConnection();
-    try {db.connect(); 
-    } catch (ClassNotFoundException ex) {
-        JOptionPane.showMessageDialog(this, "DB Driver error: " + ex.getMessage());
-    }
-    loadCounselors();
+        initComponents();
+        this.db = new dbConnection();
+        try {db.connect(); 
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "DB Driver error: " + ex.getMessage());
+        }
+        loadCounselors();
 
     // Add a listener for table row selection:
     jTable1.getSelectionModel().addListSelectionListener(e -> {
@@ -45,8 +45,8 @@ public class counselorManagement extends javax.swing.JFrame {
         jTable1.clearSelection();
 }
     private void loadCounselors() {
-    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    model.setRowCount(0); // clear existing rows
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // clear existing rows
 
     Connection conn = db.getConnection();
     try (Statement stmt = conn.createStatement();
@@ -93,6 +93,8 @@ public class counselorManagement extends javax.swing.JFrame {
         txfAvailability = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(1024, 641));
+        setPreferredSize(new java.awt.Dimension(1024, 641));
 
         btnCMadd.setText("Add");
         btnCMadd.addActionListener(new java.awt.event.ActionListener() {
@@ -240,14 +242,14 @@ public class counselorManagement extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
@@ -345,9 +347,9 @@ public class counselorManagement extends javax.swing.JFrame {
     if (confirm != JOptionPane.YES_OPTION) return;
 
     String sql = "DELETE FROM Counselors WHERE CounselorID=?";
-
-    try (Connection conn = db.getConnection();
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    
+    Connection conn = db.getConnection();
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
         pstmt.setInt(1, selectedCounselorId);
 

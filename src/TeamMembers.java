@@ -50,10 +50,10 @@ public class TeamMembers extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(1000, 800));
         setResizable(false);
 
         jPanel1.setBackground(java.awt.SystemColor.textHighlight);
+        jPanel1.setMaximumSize(new java.awt.Dimension(858, 678));
 
         jPanel2.setBackground(new java.awt.Color(0, 0, 0));
 

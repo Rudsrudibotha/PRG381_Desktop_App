@@ -42,6 +42,7 @@ public class MainMenu extends javax.swing.JFrame {
         setResizable(false);
 
         jPanel1.setBackground(java.awt.SystemColor.textHighlight);
+        jPanel1.setMaximumSize(new java.awt.Dimension(1069, 693));
 
         btnMMtmember.setBackground(java.awt.SystemColor.inactiveCaption);
         btnMMtmember.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
