@@ -2,20 +2,69 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.*;  
+import java.sql.*;  
 /**
  *
  * @author rudsr
  */
 public class counselorManagement extends javax.swing.JFrame {
+    private int selectedCounselorId = -1;
     private dbConnection db;
     /**
      * Creates new form counselorManagement
      */
     public counselorManagement() {
-        initComponents();
-        this.db = db;
+    initComponents();
+    this.db = new dbConnection();
+    try {db.connect(); // Or your method to open connection
+    } catch (ClassNotFoundException ex) {
+        JOptionPane.showMessageDialog(this, "DB Driver error: " + ex.getMessage());
     }
+    loadCounselors();
+
+    // Add a listener for table row selection:
+    jTable1.getSelectionModel().addListSelectionListener(e -> {
+        int row = jTable1.getSelectedRow();
+        if (row >= 0) {
+            selectedCounselorId = (int) jTable1.getValueAt(row, 0);
+            txfcounselorID.setText(String.valueOf(selectedCounselorId));
+            txfName.setText((String) jTable1.getValueAt(row, 1));
+            txfspecialization.setText((String) jTable1.getValueAt(row, 2));
+            txfAvailability.setText((String) jTable1.getValueAt(row, 3));
+        }
+    });
+    }
+    private void clearFields() {
+        txfcounselorID.setText("");
+        txfName.setText("");
+        txfspecialization.setText("");
+        txfAvailability.setText("");
+        jTable1.clearSelection();
+}
+    private void loadCounselors() {
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0); // clear existing rows
+
+    Connection conn = db.getConnection();
+    try (Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery("SELECT * FROM Counselors")) {
+
+        while (rs.next()) {
+            Object[] row = {
+                rs.getInt("CounselorID"),
+                rs.getString("Name"),
+                rs.getString("Specialization"),
+                rs.getString("Availability")
+            };
+            model.addRow(row);
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error loading counselors: " + e.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -26,21 +75,303 @@ public class counselorManagement extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        btnCMadd = new javax.swing.JButton();
+        btnCMexit = new javax.swing.JButton();
+        btnCMupdate = new javax.swing.JButton();
+        btnCMDelete = new javax.swing.JButton();
+        btnCMmainmenu = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txfcounselorID = new javax.swing.JTextField();
+        txfName = new javax.swing.JTextField();
+        txfspecialization = new javax.swing.JTextField();
+        txfAvailability = new javax.swing.JTextField();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        btnCMadd.setText("Add");
+        btnCMadd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCMaddActionPerformed(evt);
+            }
+        });
+
+        btnCMexit.setText("Exit");
+        btnCMexit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCMexitActionPerformed(evt);
+            }
+        });
+
+        btnCMupdate.setText("Update");
+        btnCMupdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCMupdateActionPerformed(evt);
+            }
+        });
+
+        btnCMDelete.setText("Delete");
+        btnCMDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCMDeleteActionPerformed(evt);
+            }
+        });
+
+        btnCMmainmenu.setText("Main Menu");
+        btnCMmainmenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCMmainmenuActionPerformed(evt);
+            }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "CounselorID", "Name", "Specialization", "Availability"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        jLabel1.setText("Counselor ID");
+
+        jLabel2.setText("Name");
+
+        jLabel3.setText("Specialization");
+
+        jLabel4.setText("Availability");
+
+        txfcounselorID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txfcounselorIDActionPerformed(evt);
+            }
+        });
+
+        txfName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txfNameActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(59, 59, 59)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCMadd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCMupdate)
+                        .addGap(91, 91, 91)
+                        .addComponent(btnCMDelete))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(149, 149, 149)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txfAvailability, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txfspecialization, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txfcounselorID, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txfName, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(32, 32, 32)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 793, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnCMmainmenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnCMexit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(52, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnCMexit)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCMmainmenu))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txfcounselorID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txfName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txfspecialization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txfAvailability, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCMupdate)
+                    .addComponent(btnCMadd)
+                    .addComponent(btnCMDelete))
+                .addGap(19, 19, 19))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCMaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCMaddActionPerformed
+        
+    String name = txfName.getText().trim();
+    String specialization = txfspecialization.getText().trim();
+    String availability = txfAvailability.getText().trim();
+
+    if (name.isEmpty() || specialization.isEmpty() || availability.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please fill all fields.");
+        return;
+    }
+
+    String sql = "INSERT INTO Counselors (Name, Specialization, Availability) VALUES (?, ?, ?)";
+
+    Connection conn = db.getConnection();
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setString(1, name);
+        pstmt.setString(2, specialization);
+        pstmt.setString(3, availability);
+
+        int inserted = pstmt.executeUpdate();
+        if (inserted > 0) {
+            JOptionPane.showMessageDialog(this, "Counselor added successfully.");
+            loadCounselors();
+            clearFields();
+        }
+
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "Error adding counselor: " + ex.getMessage());
+    }
+    }//GEN-LAST:event_btnCMaddActionPerformed
+
+    private void txfcounselorIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txfcounselorIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txfcounselorIDActionPerformed
+
+    private void txfNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txfNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txfNameActionPerformed
+
+    private void btnCMupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCMupdateActionPerformed
+        if (selectedCounselorId == -1) {
+        JOptionPane.showMessageDialog(this, "Select a counselor to update.");
+        return;
+    }
+
+    String name = txfName.getText().trim();
+    String specialization = txfspecialization.getText().trim();
+    String availability = txfAvailability.getText().trim();
+
+    if (name.isEmpty() || specialization.isEmpty() || availability.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please fill all fields.");
+        return;
+    }
+
+    String sql = "UPDATE Counselors SET Name=?, Specialization=?, Availability=? WHERE CounselorID=?";
+
+    Connection conn = db.getConnection();
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setString(1, name);
+        pstmt.setString(2, specialization);
+        pstmt.setString(3, availability);
+        pstmt.setInt(4, selectedCounselorId);
+
+        int updated = pstmt.executeUpdate();
+        if (updated > 0) {
+            JOptionPane.showMessageDialog(this, "Counselor updated successfully.");
+            loadCounselors();
+            clearFields();
+            selectedCounselorId = -1;
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error updating counselor: " + e.getMessage());
+    }
+    }//GEN-LAST:event_btnCMupdateActionPerformed
+
+    private void btnCMDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCMDeleteActionPerformed
+       if (selectedCounselorId == -1) {
+        JOptionPane.showMessageDialog(this, "Select a counselor to delete.");
+        return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(this,
+            "Are you sure you want to delete this counselor?",
+            "Confirm Delete",
+            JOptionPane.YES_NO_OPTION);
+
+    if (confirm != JOptionPane.YES_OPTION) return;
+
+    String sql = "DELETE FROM Counselors WHERE CounselorID=?";
+
+    try (Connection conn = db.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setInt(1, selectedCounselorId);
+
+        int deleted = pstmt.executeUpdate();
+        if (deleted > 0) {
+            JOptionPane.showMessageDialog(this, "Counselor deleted successfully.");
+            loadCounselors();
+            clearFields();
+            selectedCounselorId = -1;
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error deleting counselor: " + e.getMessage());
+    }
+    }//GEN-LAST:event_btnCMDeleteActionPerformed
+
+    private void btnCMmainmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCMmainmenuActionPerformed
+        this.dispose();
+        new MainMenu().setVisible(true);
+    }//GEN-LAST:event_btnCMmainmenuActionPerformed
+
+    private void btnCMexitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCMexitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnCMexitActionPerformed
 
     /**
      * @param args the command line arguments
@@ -78,5 +409,21 @@ public class counselorManagement extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCMDelete;
+    private javax.swing.JButton btnCMadd;
+    private javax.swing.JButton btnCMexit;
+    private javax.swing.JButton btnCMmainmenu;
+    private javax.swing.JButton btnCMupdate;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField txfAvailability;
+    private javax.swing.JTextField txfName;
+    private javax.swing.JTextField txfcounselorID;
+    private javax.swing.JTextField txfspecialization;
     // End of variables declaration//GEN-END:variables
 }

@@ -185,7 +185,7 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnMMexitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMMexitActionPerformed
-        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_btnMMexitActionPerformed
 
     private void btnMMfmangerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMMfmangerActionPerformed
