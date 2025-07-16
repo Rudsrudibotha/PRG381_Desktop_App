@@ -44,8 +44,8 @@ public class appointmentManager extends javax.swing.JFrame
                     rs.getInt("AppointmentID"),
                     rs.getString("StudentName"),
                     rs.getString("CounselorID"),
-                    rs.getString("Date"),
-                    rs.getString("Time"),
+                    rs.getString("AppointmentDate"),
+                    rs.getString("AppointmentTime"),
                     rs.getString("Status")
                 });
             }
@@ -90,45 +90,8 @@ public class appointmentManager extends javax.swing.JFrame
         }
         return sb.toString();
     }
-    
-        private void btnAMaddActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        String studentName = txtFieldAMStudentName.getText().trim();
-        String counselorID = txtFieldAMCounselorID.getText().trim();
-        String date = txtFieldAMDate.getText().trim();
-        String time = txtFieldAMTime.getText().trim();
-        String status = txtFieldAMStatus.getText().trim();
-
-        if (studentName.isEmpty() || counselorID.isEmpty() || date.isEmpty() || time.isEmpty() || status.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all fields.");
-            return;
-        }
-
-        try (Connection conn = db.getConnection();
-             PreparedStatement ps = conn.prepareStatement(
-                     "INSERT INTO Appointments (StudentName, CounselorID, Date, Time, Status) VALUES (?, ?, ?, ?, ?)")) {
-
-            ps.setString(1, studentName);
-            ps.setString(2, counselorID);
-            ps.setString(3, date);
-            ps.setString(4, time);
-            ps.setString(5, status);
-            ps.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Appointment added successfully.");
-            loadAppointmentsIntoTable();
-            clearFields();
-
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error adding appointment: " + ex.getMessage());
-        }
-    }
-    // Event handler for Main Menu button
-
-
     // Event handler for Exit button
-    private void btnAMexitActionPerformed(java.awt.event.ActionEvent evt) {                                        
-        System.exit(0);
-    }
+    // Event handler for Main Menu button
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -160,18 +123,29 @@ public class appointmentManager extends javax.swing.JFrame
 
         ApointmentMtable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "AppointmentID", "StudentName", "CounselorID", "Date", "Time", "Status"
             }
         ));
         jScrollPane1.setViewportView(ApointmentMtable);
+        if (ApointmentMtable.getColumnModel().getColumnCount() > 0) {
+            ApointmentMtable.getColumnModel().getColumn(0).setResizable(false);
+            ApointmentMtable.getColumnModel().getColumn(1).setResizable(false);
+            ApointmentMtable.getColumnModel().getColumn(2).setResizable(false);
+            ApointmentMtable.getColumnModel().getColumn(3).setResizable(false);
+        }
 
         btnAMadd.setText("Add New");
+        btnAMadd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAMaddActionPerformed(evt);
+            }
+        });
 
         btnAMmainmenu.setText("Main Menu");
         btnAMmainmenu.addActionListener(new java.awt.event.ActionListener() {
@@ -181,6 +155,11 @@ public class appointmentManager extends javax.swing.JFrame
         });
 
         btnAMexit.setText("Exit");
+        btnAMexit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAMexitActionPerformed(evt);
+            }
+        });
 
         lableStudentname.setText("Student Name:");
 
@@ -289,45 +268,98 @@ public class appointmentManager extends javax.swing.JFrame
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAMmainmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAMmainmenuActionPerformed
-
+        this.dispose();
+        new MainMenu().setVisible(true);
     }//GEN-LAST:event_btnAMmainmenuActionPerformed
 
     private void txtFieldAMStudentNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldAMStudentNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFieldAMStudentNameActionPerformed
 
+    private void btnAMaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAMaddActionPerformed
+        String studentName = txtFieldAMStudentName.getText().trim();
+        String counselorIdStr = txtFieldAMCounselorID.getText().trim();
+        String dateStr = txtFieldAMDate.getText().trim();
+        String timeStr = txtFieldAMTime.getText().trim();
+        String status = txtFieldAMStatus.getText().trim();
+
+        if (studentName.isEmpty() || counselorIdStr.isEmpty() || dateStr.isEmpty() || timeStr.isEmpty() || status.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int counselorId;
+        try {
+            counselorId = Integer.parseInt(counselorIdStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Counselor ID must be a number.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        java.sql.Date sqlDate;
+        try
+        {
+            sqlDate = java.sql.Date.valueOf(dateStr);
+        }catch (IllegalArgumentException e)
+        {
+            JOptionPane.showMessageDialog(this, "Invalid Date");
+        }
+        java.sql.Time sqlTime;
+        try
+        {
+            sqlTime = java.sql.Time.valueOf(timeStr);
+        }catch (IllegalArgumentException e)
+        {
+            JOptionPane.showMessageDialog(this, "Invalid Time");
+        }
+        try {
+            Connection con = db.getConnection(); // Get shared connection, DON'T close it
+            try (PreparedStatement pstmt = con.prepareStatement(
+                "INSERT INTO Appointments (StudentName, CounselorID, AppointmentDate, AppointmentTime, Status) VALUES (?, ?, ?, ?, ?)")) {
+
+                pstmt.setString(1, studentName);
+                pstmt.setInt(2, counselorId);
+                pstmt.setDate(3, java.sql.Date.valueOf(dateStr));
+                pstmt.setTime(4, java.sql.Time.valueOf(timeStr));
+                pstmt.setString(5, status);
+
+                int rowsInserted = pstmt.executeUpdate();
+
+                if (rowsInserted > 0) {
+                    JOptionPane.showMessageDialog(this, "Appointment added successfully!");
+                    loadAppointmentsIntoTable();
+                    clearFields();
+                } else 
+                {
+                    JOptionPane.showMessageDialog(this, "Failed to add appointment.", "Insert Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Invalid date/time format. Date must be YYYY-MM-DD and Time must be HH:MM:SS.", "Format Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnAMaddActionPerformed
+
+    private void btnAMexitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAMexitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnAMexitActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(appointmentManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(appointmentManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(appointmentManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(appointmentManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
+    try {
         dbConnection db = new dbConnection();
+        db.connect(); // ✅ Establish DB connection
+        db.createTables(); // Optional: Create tables on startup
+
         java.awt.EventQueue.invokeLater(() -> {
             new appointmentManager(db).setVisible(true);
         });
+    } catch (ClassNotFoundException ex) {
+        JOptionPane.showMessageDialog(null, "Database driver not found: " + ex.getMessage());
+    }
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -348,3 +380,4 @@ public class appointmentManager extends javax.swing.JFrame
     private javax.swing.JTextField txtFieldAMStudentName;
     private javax.swing.JTextField txtFieldAMTime;
     // End of variables declaration//GEN-END:variables
+}
