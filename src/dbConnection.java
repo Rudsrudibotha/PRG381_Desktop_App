@@ -40,8 +40,9 @@ public class dbConnection {
     public Connection getConnection() {
         return con;
     }
-
-    // Create the tables required by the Wellness Management System
+    
+    // Create the tables required
+ // Create the tables required
     public void createTables() {
         try (Statement stmt = con.createStatement()) {
             // Create Counselors Table
@@ -92,6 +93,7 @@ public class dbConnection {
                 "Comments VARCHAR(255))"
             );
             System.out.println("Feedback table created.");
+            
         } catch (SQLException e) {
             if (e.getSQLState().equals("X0Y32")) {
                 System.out.println("Feedback table already exists.");
