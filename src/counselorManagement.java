@@ -19,7 +19,7 @@ public class counselorManagement extends javax.swing.JFrame {
     public counselorManagement() {
     initComponents();
     this.db = new dbConnection();
-    try {db.connect(); // Or your method to open connection
+    try {db.connect(); 
     } catch (ClassNotFoundException ex) {
         JOptionPane.showMessageDialog(this, "DB Driver error: " + ex.getMessage());
     }

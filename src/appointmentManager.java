@@ -352,8 +352,8 @@ public class appointmentManager extends javax.swing.JFrame
     public static void main(String args[]) {
     try {
         dbConnection db = new dbConnection();
-        db.connect(); // ✅ Establish DB connection
-        db.createTables(); // Optional: Create tables on startup
+        db.connect(); //Establish DB connection
+        db.createTables(); //Create tables on startup
         
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {db.close();}));
 
