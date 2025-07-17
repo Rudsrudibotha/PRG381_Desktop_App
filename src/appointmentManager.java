@@ -9,8 +9,18 @@ import java.awt.event.*;
 import java.sql.*;
 import java.awt.datatransfer.StringSelection;
 /**
- *
- * @author rudsr
+ * appointmentManager.java
+ * 
+ * This class provides a GUI for managing appointments in the Wellness Management System.
+ * It allows the user to add new appointments, view them in a table, and copy data from the table.
+ * 
+ * Features:
+ * - Form inputs for Student Name, Counselor ID, Date, Time, and Status
+ * - Appointment table with real-time loading
+ * - Clipboard copy functionality
+ * - Database integration via dbConnection
+ * 
+ * 
  */
 public class appointmentManager extends javax.swing.JFrame
 {
@@ -18,17 +28,21 @@ public class appointmentManager extends javax.swing.JFrame
     private dbConnection db;
     
     
-    /**
-     * Creates new form appointmentManager
-     */
+/**
+ * Constructor initializes the appointmentManager form.
+ * 
+ * @param db - A connected instance of dbConnection used for all DB operations.
+ */
     public appointmentManager(dbConnection db) 
     {
         this.db = db;
-        initComponents();
-        loadAppointmentsIntoTable();
-        setupTableCopy();
+        initComponents();// Initialize GUI components (NetBeans generated)
+        loadAppointmentsIntoTable();// Load appointments into the table from DB
+        setupTableCopy();// Enable Ctrl+C functionality on the JTable
     }
-  
+ /**
+ * Populates the ApointmentMtable JTable with all appointments from the database.
+ */
     private void loadAppointmentsIntoTable() 
     {
         DefaultTableModel model = (DefaultTableModel) ApointmentMtable.getModel();
@@ -55,6 +69,9 @@ public class appointmentManager extends javax.swing.JFrame
             JOptionPane.showMessageDialog(this, "Error loading appointments: " + ex.getMessage());
         }
     }
+    /**
+ * Clears all text input fields in the form.
+ */
     private void clearFields() 
     {
         txtFieldAMStudentName.setText("");
@@ -63,7 +80,9 @@ public class appointmentManager extends javax.swing.JFrame
         txtFieldAMTime.setText("");
         txtFieldAMStatus.setText("");
     }
-     
+     /**
+ * Enables Ctrl+C copy functionality for the JTable to export selected cells to clipboard.
+ */
     private void setupTableCopy() {
         ApointmentMtable.setCellSelectionEnabled(true);
         ApointmentMtable.getInputMap().put(KeyStroke.getKeyStroke("ctrl C"), "copy");
@@ -74,7 +93,11 @@ public class appointmentManager extends javax.swing.JFrame
             }
         });
     }
-    
+    /**
+ * Returns selected cells from the JTable as a tab-delimited string.
+ * 
+ * @return String representation of selected table data.
+ */
     private String getSelectedTableCells() {
         int[] rows = ApointmentMtable.getSelectedRows();
         int[] cols = ApointmentMtable.getSelectedColumns();
@@ -268,7 +291,9 @@ public class appointmentManager extends javax.swing.JFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+/**
+ * Navigates back to the Main Menu.
+ */
     private void btnAMmainmenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAMmainmenuActionPerformed
         this.dispose();
         new MainMenu().setVisible(true);
@@ -277,8 +302,11 @@ public class appointmentManager extends javax.swing.JFrame
     private void txtFieldAMStudentNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldAMStudentNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFieldAMStudentNameActionPerformed
-
+/**
+ * Handles the Add button click event to insert a new appointment into the database.
+ */
     private void btnAMaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAMaddActionPerformed
+         // Collect and validate form inputs
         String studentName = txtFieldAMStudentName.getText().trim();
         String counselorIdStr = txtFieldAMCounselorID.getText().trim();
         String dateStr = txtFieldAMDate.getText().trim();
@@ -297,6 +325,7 @@ public class appointmentManager extends javax.swing.JFrame
                 JOptionPane.showMessageDialog(this, "Counselor ID must be a number.", "Input Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            // Validate date and time formats
         java.sql.Date sqlDate;
         try
         {
@@ -341,14 +370,17 @@ public class appointmentManager extends javax.swing.JFrame
             JOptionPane.showMessageDialog(this, "Invalid date/time format. Date must be YYYY-MM-DD and Time must be HH:MM:SS.", "Format Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAMaddActionPerformed
-
+/**
+ * Exits the application.
+ */
     private void btnAMexitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAMexitActionPerformed
         System.exit(0);
     }//GEN-LAST:event_btnAMexitActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+/**
+ * Entry point for launching the Appointment Manager screen.
+ * Connects to the DB and sets up the shutdown hook.
+ */
     public static void main(String args[]) {
     try {
         dbConnection db = new dbConnection();

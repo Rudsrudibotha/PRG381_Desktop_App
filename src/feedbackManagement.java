@@ -7,14 +7,51 @@
  *
  * @author rudsr
  */
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
 public class feedbackManagement extends javax.swing.JFrame {
     private dbConnection db;
     /**
      * Creates new form feedbackManagement
      */
+    
+    private void loadFeedback() {
+    DefaultTableModel model = (DefaultTableModel) tblFeedback.getModel();
+    model.setRowCount(0);
+
+    String sql = "SELECT * FROM Feedback";
+    try (Statement stmt = db.getConnection().createStatement();
+         ResultSet rs = stmt.executeQuery(sql)) {
+
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                rs.getInt("FeedbackID"),
+                rs.getString("StudentName"),
+                rs.getInt("Rating"),
+                rs.getString("Comments")
+            });
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Load error: " + e.getMessage());
+    }
+}
+    
     public feedbackManagement() {
         initComponents();
-        this.db = db;
+        DefaultTableModel model = (DefaultTableModel) tblFeedback.getModel();
+        model.setRowCount(0); // Clear placeholder rows from GUI builder
+        this.db = new dbConnection();
+try {
+    db.connect();  // ✅ this sets up the real database connection
+} catch (ClassNotFoundException ex) {
+    JOptionPane.showMessageDialog(this, "DB Driver Error: " + ex.getMessage());
+}
+     loadFeedback();
     }
 
     /**
@@ -26,21 +63,283 @@ public class feedbackManagement extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblFeedback = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        txfStudent = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        txfRating = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txaComments = new javax.swing.JTextArea();
+        btnAdd = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jButton2.setText("Exit");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Main Menu");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        tblFeedback.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "FeedbackID", "Student", "Rating", "Comments"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblFeedback.setColumnSelectionAllowed(true);
+        jScrollPane1.setViewportView(tblFeedback);
+        tblFeedback.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+        jLabel1.setText("Student:");
+
+        txfStudent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txfStudentActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Rating (1-5):");
+
+        jLabel3.setText("Comments:");
+
+        txaComments.setColumns(20);
+        txaComments.setRows(5);
+        jScrollPane2.setViewportView(txaComments);
+
+        btnAdd.setText("Add");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
+
+        btnUpdate.setText("Update");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
+
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txfStudent, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                            .addComponent(txfRating))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane2)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton3)
+                            .addComponent(jButton2)
+                            .addComponent(btnAdd)
+                            .addComponent(btnUpdate)
+                            .addComponent(btnDelete))
+                        .addGap(42, 42, 42))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnUpdate)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txfStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(txfRating, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDelete)))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        this.dispose();
+        new MainMenu().setVisible(true);        
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+      System.exit(0);  
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void txfStudentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txfStudentActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txfStudentActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        String student = txfStudent.getText().trim();
+        String ratingStr = txfRating.getText().trim();
+        String comments = txaComments.getText().trim();
+
+if (student.isEmpty() || ratingStr.isEmpty() || comments.isEmpty()) {
+    JOptionPane.showMessageDialog(this, "Please fill all fields.");
+    return;
+}
+
+int rating;
+try {
+    rating = Integer.parseInt(ratingStr);
+    if (rating < 1 || rating > 5) throw new NumberFormatException();
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(this, "Rating must be a number between 1 and 5.");
+    return;
+}
+
+String sql = "INSERT INTO Feedback (StudentName, Rating, Comments) VALUES (?, ?, ?)";
+
+try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
+    pstmt.setString(1, student);
+    pstmt.setInt(2, rating);
+    pstmt.setString(3, comments);
+    pstmt.executeUpdate();
+    JOptionPane.showMessageDialog(this, "Feedback added.");
+    loadFeedback();
+} catch (SQLException e) {
+    JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+}
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        int selectedRow = tblFeedback.getSelectedRow();
+if (selectedRow == -1) {
+    JOptionPane.showMessageDialog(this, "Select a feedback entry to update.");
+    return;
+}
+
+String student = txfStudent.getText().trim();
+String ratingStr = txfRating.getText().trim();
+String comments = txaComments.getText().trim();
+
+if (student.isEmpty() || ratingStr.isEmpty() || comments.isEmpty()) {
+    JOptionPane.showMessageDialog(this, "Please fill in all fields.");
+    return;
+}
+
+int rating;
+try {
+    rating = Integer.parseInt(ratingStr);
+    if (rating < 1 || rating > 5) throw new NumberFormatException();
+} catch (NumberFormatException ex) {
+    JOptionPane.showMessageDialog(this, "Rating must be a number between 1 and 5.");
+    return;
+}
+
+int feedbackId = (int) tblFeedback.getValueAt(selectedRow, 0);  // get FeedbackID
+
+String sql = "UPDATE Feedback SET StudentName=?, Rating=?, Comments=? WHERE FeedbackID=?";
+
+try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
+    pstmt.setString(1, student);
+    pstmt.setInt(2, rating);
+    pstmt.setString(3, comments);
+    pstmt.setInt(4, feedbackId);
+
+    pstmt.executeUpdate();
+    JOptionPane.showMessageDialog(this, "Feedback updated.");
+    loadFeedback();
+} catch (SQLException e) {
+    JOptionPane.showMessageDialog(this, "Update error: " + e.getMessage());
+}
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+      int selectedRow = tblFeedback.getSelectedRow();
+if (selectedRow == -1) {
+    JOptionPane.showMessageDialog(this, "Select a feedback entry to delete.");
+    return;
+}
+
+int confirm = JOptionPane.showConfirmDialog(this,
+        "Are you sure you want to delete this feedback?",
+        "Confirm Delete",
+        JOptionPane.YES_NO_OPTION);
+
+if (confirm != JOptionPane.YES_OPTION) return;
+
+int feedbackId = (int) tblFeedback.getValueAt(selectedRow, 0);  // FeedbackID
+
+String sql = "DELETE FROM Feedback WHERE FeedbackID=?";
+
+try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
+    pstmt.setInt(1, feedbackId);
+    pstmt.executeUpdate();
+    JOptionPane.showMessageDialog(this, "Feedback deleted.");
+    loadFeedback();
+} catch (SQLException e) {
+    JOptionPane.showMessageDialog(this, "Delete error: " + e.getMessage());
+}
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -78,5 +377,22 @@ public class feedbackManagement extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnUpdate;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tblFeedback;
+    private javax.swing.JTextArea txaComments;
+    private javax.swing.JTextField txfRating;
+    private javax.swing.JTextField txfStudent;
     // End of variables declaration//GEN-END:variables
 }
