@@ -52,6 +52,19 @@ try {
     JOptionPane.showMessageDialog(this, "DB Driver Error: " + ex.getMessage());
 }
      loadFeedback();
+     
+     tblFeedback.getSelectionModel().addListSelectionListener(e -> {
+    if (!e.getValueIsAdjusting()) {
+        int selectedRow = tblFeedback.getSelectedRow();
+        if (selectedRow >= 0) {
+            // Extract values from table and set them in fields
+            txfStudent.setText(tblFeedback.getValueAt(selectedRow, 1).toString()); // Assuming column 1 is StudentName
+            txfRating.setText(tblFeedback.getValueAt(selectedRow, 2).toString());  // Assuming column 2 is Rating
+            txaComments.setText(tblFeedback.getValueAt(selectedRow, 3).toString()); // Assuming column 3 is Comments
+        }
+    }
+});
+     
     }
 
     /**
